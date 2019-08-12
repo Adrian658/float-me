@@ -5,6 +5,14 @@ import struct
 import sys
 
 def native_binary(num):
+    '''
+    Function:
+        Prints out the native binary representation of a float
+
+    Params:
+        num: float number
+    '''
+
     x = ''.join('{:0>8b}'.format(c) for c in struct.pack('!f', num))
     print("Sign - Exponent - Mantissa")
     return x [0] + " - " + x[1:9] + " - " + x[9:]
@@ -23,9 +31,9 @@ def pack_float(num):
     else:
         sign = '1'
         num  = abs(num)
-    # Convert float number to binary representation
+    ### Convert float number to binary representation
     binary_num = convert_float_to_binary(num)
-    # Normalize the mantissa
+    ### Normalize the mantissa
     try:
         cur_decimal = binary_num.find('.')
         shifted_decimal = binary_num.index('1') + 1
@@ -36,7 +44,7 @@ def pack_float(num):
         shift = cur_decimal - shifted_decimal
         if shift < 0:
             shift+=1
-    # Find the final exponent and mantissa
+    ### Find the final exponent and mantissa
     exponent = convert_whole_to_binary(shift + 127)
     exponent = "".join(['0']*(8 - len(exponent))) + exponent
     mantissa = binary_num[shifted_decimal:].replace(".", "")
@@ -46,6 +54,14 @@ def pack_float(num):
     return sign + " - " + exponent + " - " + mantissa
 
 def convert_float_to_binary(num):
+    '''
+    Function:
+        Converts a number to its binary equivalent
+
+    Params:
+        num: float number
+    '''
+
     num_split = str(num).split(".")
     try:
         num_split[1] = "0." + num_split[1]
@@ -57,6 +73,14 @@ def convert_float_to_binary(num):
     return binary_whole + "." + binary_fraction
 
 def convert_whole_to_binary(num):
+    '''
+    Function:
+        Converts an integer to its binary equivalent
+
+    Params:
+        num: integer number
+    '''
+
     binary = [0]*128
     length = 0
     quotient = int(num)
@@ -72,6 +96,14 @@ def convert_whole_to_binary(num):
     return "".join(binary)
 
 def convert_fraction_to_binary(num):
+    '''
+    Function:
+        Converts the fractional portion of a float to its binary equivalent
+    
+    Params:
+        num: fractional portion of float number
+    '''
+
     binary = []
     product = num
     while True:
@@ -83,9 +115,17 @@ def convert_fraction_to_binary(num):
             break
     return "".join(binary)
 
-def test_packing_time(test):
+def test_packing_time(test, test_range=1000000):
+    '''
+    Function:
+        Test the average time to pack a float using the pack_float() method with 1,000,000 iterations
+
+    Params:
+        test: float number to test
+        test_range: number of tests to run
+    '''
+
     total = 0
-    test_range = 1000000
     for i in range(test_range):
         start = time.time()
         pack_float(test)
