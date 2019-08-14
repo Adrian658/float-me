@@ -132,6 +132,31 @@ def test_packing_time(test, test_range=1000000):
         total+=time.time() - start
     return total / test_range
 
+def convert_binary_to_int(binary):
+    binary = str(binary)
+    length = len(binary)-1
+    sum_total = 0
+    for bit in binary:
+        sum_total+=int(bit) * math.pow(2, length)
+        length-=1
+    return sum_total
+
+def compare_floats(float1, float2, max_ULPs=4):
+    # Numbers have different signs, return false
+    if float1 < 0 != float2 < 0:
+        return False
+
+    # Get binary form of floats
+    float1 = int(''.join('{:0>8b}'.format(c) for c in struct.pack('!f', float1)))
+    float2 = int(''.join('{:0>8b}'.format(c) for c in struct.pack('!f', float2)))
+
+    # Convert binary to int
+    float1 = int(convert_binary_to_int(float1))
+    float2 = int(convert_binary_to_int(float2))
+    
+    # Compare integer representations
+    return abs(float2 - float1) < max_ULPs
+
 if __name__ == "__main__":
 
     num = float(sys.argv[1])
