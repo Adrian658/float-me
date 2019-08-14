@@ -3,6 +3,7 @@ from decimal import Decimal
 import time
 import struct
 import sys
+import math
 
 def native_binary(num, visualize=True):
     '''
@@ -149,7 +150,7 @@ def convert_binary_to_int(binary):
         length-=1
     return sum_total
 
-def compare_floats(float1, float2, max_ULPs=4):
+def find_ULP_difference(float1, float2):
     # Numbers have different signs, return false
     if float1 < 0 != float2 < 0:
         return False
@@ -163,10 +164,20 @@ def compare_floats(float1, float2, max_ULPs=4):
     float2 = int(convert_binary_to_int(float2))
 
     # Compare integer representations
-    return abs(float2 - float1) < max_ULPs
+    return abs(float2 - float1)
+
+def compare_floats(float1, float2, max_ULPs=4):
+    ulp_diff = find_ULP_difference(float1, float2)
+    return ulp_diff < max_ULPs
+
 
 if __name__ == "__main__":
 
-    num = float(sys.argv[1])
+    try:
+        num = float(sys.argv[1])
+    except IndexError:
+        num = 0.1
 
     print(pack_float(num))
+    
+    print(find_ULP_difference(0, 0.1))
