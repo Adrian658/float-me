@@ -4,7 +4,7 @@ import time
 import struct
 import sys
 
-def native_binary(num):
+def native_binary(num, visualize=True):
     '''
     Function:
         Prints out the native binary representation of a float
@@ -14,16 +14,21 @@ def native_binary(num):
     '''
 
     x = ''.join('{:0>8b}'.format(c) for c in struct.pack('!f', num))
-    print("Sign - Exponent - Mantissa")
-    return x [0] + " - " + x[1:9] + " - " + x[9:]
+    if visualize:
+        print("Sign - Exponent - Mantissa")
+        return x [0] + " - " + x[1:9] + " - " + x[9:]
+    else:
+        return x
+    
 
-def pack_float(num):
+def pack_float(num, visualize=True):
     '''
     Function:
         Converts a floating point number to the IEEE 754 32-bit base-2 floating-point variable format
     
     Params:
         num: floating point number to pack
+        visualize: return in a form that is easier to read
     '''
     
     if num >= 0:
@@ -50,8 +55,11 @@ def pack_float(num):
     mantissa = binary_num[shifted_decimal:].replace(".", "")
     mantissa = mantissa + "".join(['0']*(23 - len(mantissa)))
     mantissa = mantissa[0:23]
-    print("Sign - Exponent - Mantissa")
-    return sign + " - " + exponent + " - " + mantissa
+    if visualize:
+        print("Sign - Exponent - Mantissa")
+        return sign + " - " + exponent + " - " + mantissa
+    else:
+        return sign + exponent + mantissa
 
 def convert_float_to_binary(num):
     '''
@@ -147,13 +155,13 @@ def compare_floats(float1, float2, max_ULPs=4):
         return False
 
     # Get binary form of floats
-    float1 = int(''.join('{:0>8b}'.format(c) for c in struct.pack('!f', float1)))
-    float2 = int(''.join('{:0>8b}'.format(c) for c in struct.pack('!f', float2)))
+    float1 = int(native_binary(float1, False))
+    float2 = int(native_binary(float2, False))
 
     # Convert binary to int
     float1 = int(convert_binary_to_int(float1))
     float2 = int(convert_binary_to_int(float2))
-    
+
     # Compare integer representations
     return abs(float2 - float1) < max_ULPs
 
